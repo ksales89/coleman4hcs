@@ -163,6 +163,35 @@ class UCBPolicy(Policy):
         agent.actions['Q'] = quality_estimates + self.c * exploration
 
 
+class CumulativeEvidencePolicy(Policy):
+    """
+    The Cumulative Evidence policy selects the action with the highest cumulative evidence value,
+    which is updated using a weighted average of the rewards obtained for each action.
+    """
+
+    def __init__(self, num_arms):
+        self.num_arms = num_arms
+        self.cumulative_evidence = np.zeros(num_arms)
+        self.num_pulls = np.zeros(num_arms)
+
+    def __str__(self):
+        return 'Cumulative Evidence'
+
+    def select_action(self):
+        if np.sum(self.num_pulls) < self.num_arms:
+            # Pull each arm at least once
+            return np.random.choice(self.num_arms)
+
+        # Select the arm with the highest cumulative evidence
+        return np.argmax(self.cumulative_evidence)
+
+    def update(self, action, reward):
+        # Update the cumulative evidence for the selected arm
+        self.num_pulls[action] += 1
+        weight = 1.0 / self.num_pulls[action]
+        self.cumulative_evidence[action] += weight * (reward - self.cumulative_evidence[action])
+
+
 class FRRMABPolicy(Policy):
     """
     The Fitness-Rate-Rank based Multi-Armed Bandit.
