@@ -15,7 +15,7 @@ from coleman4hcs.reward import RNFailReward, TimeRankReward
 
 warnings.filterwarnings("ignore")
 
-ITERATIONS = 30
+ITERATIONS = 5
 PARALLEL_POOL_SIZE = 15
 DEFAULT_EXPERIMENT_DIR = 'results/experiments/'
 EXPERIMENT_DIR = DEFAULT_EXPERIMENT_DIR
