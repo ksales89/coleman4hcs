@@ -168,27 +168,33 @@ class CumulativeEvidencePolicy(Policy):
     The Cumulative Evidence policy selects the action with the highest cumulative evidence value,
     which is updated using a weighted average of the rewards obtained for each action.
     """
-    def __init__(self, c, num_arms):
+
+    def __init__(self, c):
         self.c = c
-        self.num_arms = 3
-        self.cumulative_evidence = np.zeros(num_arms)
-        self.num_pulls = np.zeros(num_arms)
 
     def __str__(self):
         return 'CEP (C={})'.format(self.c)
 
     def choose_all(self, agent: Agent):
-        actions = agent.actions.sort_values(by='cumulative_evidence', ascending=False)
+        actions = agent.actions.sort_values(by='Q', ascending=False)
         return actions['Name'].tolist()
 
     def credit_assignment(self, agent: Agent):
-        # Compute the cumulative evidence for each arm
-        self.num_pulls = agent.actions['ActionAttempts'].values
-        rewards = agent.actions['Rewards'].values
-        self.cumulative_evidence += self.c * (rewards - self.cumulative_evidence) / self.num_pulls
+        # Compute the average of rewards
+        # super().credit_assignment(agent)
 
-        # Update the quality estimates of each arm
-        agent.actions['Q'] = self.cumulative_evidence
+        action_attempts = agent.actions['ActionAttempts'].values.tolist()
+        quality_estimates = np.array(agent.actions['Q'].values.tolist())
+
+        # Compute the instantaneous reward for each action
+        rewards = np.zeros(len(action_attempts))
+        rewards[action_attempts != 0] = quality_estimates[action_attempts != 0] + \
+                                        self.c * np.sqrt((2 * np.log(sum(action_attempts))) / action_attempts)[
+                                            action_attempts != 0]
+        rewards[action_attempts == 0] = np.inf
+
+        # Update quality estimates
+        agent.actions['Q'] = quality_estimates + (1 / (1 + action_attempts)) * (reward - quality_estimates)
 
 
 class FRRMABPolicy(Policy):

@@ -78,9 +78,9 @@ def run_experiments_with_threads(repo_path, dataset, policies, window_sizes=DEFA
     # Compute time
     start = time.time()
 
-    with Pool(PARALLEL_POOL_SIZE) as p:
-        p.starmap(exp_run_industrial_dataset, parameters)
-
+    # with Pool(PARALLEL_POOL_SIZE) as p:
+    #    p.starmap(exp_run_industrial_dataset, parameters)
+    exp_run_industrial_dataset(1, trials, env)
     end = time.time()
 
     print(f"Time expend to run the experiments: {end - start}")
@@ -157,7 +157,7 @@ if __name__ == '__main__':
             policies.extend([FRRMABPolicy(float(scaling))
                              for scaling in args.scaling_factor_frr])
         elif pol == "CEP":
-            policies.extend([CumulativeEvidencePolicy(float(scaling), 3)
+            policies.extend([CumulativeEvidencePolicy(float(scaling))
                              for scaling in args.scaling_factor_ucb])
         else:
             print(f"Policies '{pol}' not found!")
