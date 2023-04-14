@@ -169,13 +169,13 @@ class CumulativeEvidencePolicy(Policy):
     which is updated using a weighted average of the rewards obtained for each action.
     """
 
-    def __init__(self, num_arms):
-        self.num_arms = num_arms
+    def __init__(self, c, num_arms):
+        self.c = c
         self.cumulative_evidence = np.zeros(num_arms)
         self.num_pulls = np.zeros(num_arms)
 
     def __str__(self):
-        return 'Cumulative Evidence'
+        return 'CEP (C={})'.format(self.c)
 
     def select_action(self):
         if np.sum(self.num_pulls) < self.num_arms:

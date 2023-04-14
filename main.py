@@ -156,6 +156,9 @@ if __name__ == '__main__':
         elif pol == "FRR":
             policies.extend([FRRMABPolicy(float(scaling))
                              for scaling in args.scaling_factor_frr])
+        # elif pol == "CEP":
+        #     policies.extend([FRRMABPolicy(float(scaling))
+        #                      for scaling in args.scaling_factor_frr])
         else:
             print(f"Policies '{pol}' not found!")
 
