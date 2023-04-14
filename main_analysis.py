@@ -130,12 +130,14 @@ if __name__ == '__main__':
         'ε-greedy (ε=0.5)': 'ε-Greedy',
         'UCB (C=0.5)': 'UCB',
         'UCB (C=0.3)': 'UCB',
+        'CEP (C=0.5)': 'CEP',
+        'CEP (C=0.3)': 'CEP',
         'FRRMAB (C=0.3, D=1, SW=100)': 'FRRMAB',
         'mlpclassifier': 'ANN'
     }
     #columns_metrics = ['FRRMAB', 'ANN']
     #columns_metrics = ['Random', 'FRRMAB', 'ANN']
-    columns_metrics = ['Random', 'FRRMAB']
+    columns_metrics = ['Random', 'FRRMAB', 'CEP']
     #columns_metrics = ['Random', 'Deterministic', 'FRRMAB', 'ANN']
 
     print_dataset(args.datasets[0])

@@ -107,7 +107,7 @@ if __name__ == '__main__':
     ap.add_argument('-r', '--rewards', nargs='+', default=['RNFailReward', 'TimeRankReward'],
                     help='Reward Functions available: RNFailReward and TimeRankReward')
 
-    ap.add_argument('-p', '--policies', nargs='+', default=['Random', 'Greedy', 'EpsilonGreedy', 'UCB', 'CEP','FRR'],
+    ap.add_argument('-p', '--policies', nargs='+', default=['Random', 'Greedy', 'EpsilonGreedy', 'UCB', 'CEP', 'FRR'],
                     help='Policies available: Random, Greedy, EpsilonGreedy, UCB, FRR')
 
     ap.add_argument('--scaling_factor_frr', type=int,

@@ -179,22 +179,21 @@ class CumulativeEvidencePolicy(Policy):
         actions = agent.actions.sort_values(by='Q', ascending=False)
         return actions['Name'].tolist()
 
-    def credit_assignment(self, agent: Agent):
-        # Compute the average of rewards
-        # super().credit_assignment(agent)
+    import numpy as np
 
+    def credit_assignment(self, agent: Agent):
         action_attempts = agent.actions['ActionAttempts'].values.tolist()
         quality_estimates = np.array(agent.actions['Q'].values.tolist())
 
         # Compute the instantaneous reward for each action
-        rewards = np.zeros(len(action_attempts))
-        rewards[action_attempts != 0] = quality_estimates[action_attempts != 0] + \
-                                        self.c * np.sqrt((2 * np.log(sum(action_attempts))) / action_attempts)[
-                                            action_attempts != 0]
-        rewards[action_attempts == 0] = np.inf
+        reward = np.zeros(len(action_attempts))
+        reward[action_attempts != 0] = quality_estimates[action_attempts != 0] + \
+                                       self.c * np.sqrt((2 * np.log(sum(action_attempts))) / action_attempts)[
+                                           action_attempts != 0]
+        reward[action_attempts == 0] = np.inf
 
         # Update quality estimates
-        agent.actions['Q'] = quality_estimates + (1 / (1 + action_attempts)) * (reward - quality_estimates)
+        agent.actions['Q'] = quality_estimates + (1 / (1 + np.array(action_attempts))) * (reward - quality_estimates)
 
 
 class FRRMABPolicy(Policy):
