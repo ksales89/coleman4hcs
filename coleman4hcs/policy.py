@@ -165,34 +165,34 @@ class UCBPolicy(Policy):
 
 class CumulativeEvidencePolicy(Policy):
     """
-    The Cumulative Evidence policy selects the action with the highest cumulative evidence value,
-    which is updated using a weighted average of the rewards obtained for each action.
+    A política Cumulative Evidence seleciona a ação com o maior valor de evidência cumulativa,
+    que é atualizado usando uma média ponderada das recompensas obtidas para cada ação.
     """
 
     def __init__(self, c):
-        self.c = c
+        self.c = c  # Armazena o valor do parâmetro c em uma variável de instância
 
     def __str__(self):
-        return 'CEP (C={})'.format(self.c)
+        return 'CEP (C={})'.format(self.c)  # Retorna uma string que representa a política CEP
 
     def choose_all(self, agent: Agent):
+        # Ordena todas as ações disponíveis pelo valor de qualidade 'Q' em ordem decrescente
         actions = agent.actions.sort_values(by='Q', ascending=False)
-        return actions['Name'].tolist()
-
-    import numpy as np
+        return actions['Name'].tolist()  # Retorna uma lista com os nomes de todas as ações ordenadas
 
     def credit_assignment(self, agent: Agent):
-        action_attempts = agent.actions['ActionAttempts'].values.tolist()
-        quality_estimates = np.array(agent.actions['Q'].values.tolist())
+        action_attempts = agent.actions['ActionAttempts'].values.tolist()  # Lista com as tentativas de cada ação
+        quality_estimates = np.array(agent.actions['Q'].values.tolist())  # Lista com os valores de qualidade de cada ação
 
-        # Compute the instantaneous reward for each action
+        # Computa a recompensa instantânea para cada ação, baseada no número de tentativas, valor de qualidade e parâmetro c
         reward = np.zeros(len(action_attempts))
         reward[action_attempts != 0] = quality_estimates[action_attempts != 0] + \
                                        self.c * np.sqrt((2 * np.log(sum(action_attempts))) / action_attempts)[
                                            action_attempts != 0]
         reward[action_attempts == 0] = np.inf
 
-        # Update quality estimates
+        # Atualiza os valores de qualidade de cada ação usando uma equação que combina o valor anterior com a recompensa instantânea
+        # A equação é ponderada pela fração de tentativas anteriores da ação
         agent.actions['Q'] = quality_estimates + (1 / (1 + np.array(action_attempts))) * (reward - quality_estimates)
 
 
