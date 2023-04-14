@@ -96,7 +96,7 @@ class RandomPolicy(EpsilonGreedyPolicy):
     """
 
     def __init__(self):
-        super().__init__(1)
+        super().__init__(0.5)
 
     def __str__(self):
         return 'Random'
