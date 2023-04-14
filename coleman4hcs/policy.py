@@ -168,28 +168,27 @@ class CumulativeEvidencePolicy(Policy):
     The Cumulative Evidence policy selects the action with the highest cumulative evidence value,
     which is updated using a weighted average of the rewards obtained for each action.
     """
-
     def __init__(self, c, num_arms):
         self.c = c
+        self.num_arms = 3
         self.cumulative_evidence = np.zeros(num_arms)
         self.num_pulls = np.zeros(num_arms)
 
     def __str__(self):
         return 'CEP (C={})'.format(self.c)
 
-    def select_action(self):
-        if np.sum(self.num_pulls) < self.num_arms:
-            # Pull each arm at least once
-            return np.random.choice(self.num_arms)
+    def choose_all(self, agent: Agent):
+        actions = agent.actions.sort_values(by='cumulative_evidence', ascending=False)
+        return actions['Name'].tolist()
 
-        # Select the arm with the highest cumulative evidence
-        return np.argmax(self.cumulative_evidence)
+    def credit_assignment(self, agent: Agent):
+        # Compute the cumulative evidence for each arm
+        self.num_pulls = agent.actions['ActionAttempts'].values
+        rewards = agent.actions['Rewards'].values
+        self.cumulative_evidence += self.c * (rewards - self.cumulative_evidence) / self.num_pulls
 
-    def update(self, action, reward):
-        # Update the cumulative evidence for the selected arm
-        self.num_pulls[action] += 1
-        weight = 1.0 / self.num_pulls[action]
-        self.cumulative_evidence[action] += weight * (reward - self.cumulative_evidence[action])
+        # Update the quality estimates of each arm
+        agent.actions['Q'] = self.cumulative_evidence
 
 
 class FRRMABPolicy(Policy):

@@ -12,7 +12,7 @@ from coleman4hcs import scenarios
 from coleman4hcs.agent import RewardSlidingWindowAgent, RewardAgent
 from coleman4hcs.environment import Environment
 from coleman4hcs.evaluation import NAPFDVerdictMetric
-from coleman4hcs.policy import FRRMABPolicy, UCBPolicy
+from coleman4hcs.policy import FRRMABPolicy, UCBPolicy, CumulativeEvidencePolicy
 from coleman4hcs.reward import RNFailReward
 from coleman4hcs.reward import TimeRankReward
 

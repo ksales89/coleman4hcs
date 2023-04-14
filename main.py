@@ -10,7 +10,7 @@ from coleman4hcs.agent import RewardAgent, RewardSlidingWindowAgent
 from coleman4hcs.environment import Environment
 from coleman4hcs.evaluation import NAPFDMetric, NAPFDVerdictMetric
 from coleman4hcs.policy import EpsilonGreedyPolicy
-from coleman4hcs.policy import FRRMABPolicy, GreedyPolicy, RandomPolicy, UCBPolicy
+from coleman4hcs.policy import FRRMABPolicy, GreedyPolicy, RandomPolicy, UCBPolicy, CumulativeEvidencePolicy
 from coleman4hcs.reward import RNFailReward, TimeRankReward
 
 warnings.filterwarnings("ignore")
@@ -107,7 +107,7 @@ if __name__ == '__main__':
     ap.add_argument('-r', '--rewards', nargs='+', default=['RNFailReward', 'TimeRankReward'],
                     help='Reward Functions available: RNFailReward and TimeRankReward')
 
-    ap.add_argument('-p', '--policies', nargs='+', default=['Random', 'Greedy', 'EpsilonGreedy', 'UCB', 'FRR'],
+    ap.add_argument('-p', '--policies', nargs='+', default=['Random', 'Greedy', 'EpsilonGreedy', 'UCB', 'CEP','FRR'],
                     help='Policies available: Random, Greedy, EpsilonGreedy, UCB, FRR')
 
     ap.add_argument('--scaling_factor_frr', type=int,
@@ -156,9 +156,9 @@ if __name__ == '__main__':
         elif pol == "FRR":
             policies.extend([FRRMABPolicy(float(scaling))
                              for scaling in args.scaling_factor_frr])
-        # elif pol == "CEP":
-        #     policies.extend([FRRMABPolicy(float(scaling))
-        #                      for scaling in args.scaling_factor_frr])
+        elif pol == "CEP":
+            policies.extend([CumulativeEvidencePolicy(float(scaling), 3)
+                             for scaling in args.scaling_factor_ucb])
         else:
             print(f"Policies '{pol}' not found!")
 
